@@ -1,0 +1,38 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  TARGET_IMAGE: registry.forge.labs.searchatlas.com/search-atlas-group/marketing/amm-syllabus
+
+build-and-push:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"registry.forge.labs.searchatlas.com\":{\"auth\":\"$(printf '%s:%s' "${DEPLOY_REGISTRY_USER}" "${DEPLOY_REGISTRY_TOKEN}" | base64)\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${TARGET_IMAGE}:latest"
+      --destination "${TARGET_IMAGE}:${CI_COMMIT_SHORT_SHA}"
+      --cache=true
+  only:
+    - main
+
+deploy-northflank:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - apk add --no-cache curl
+    - |
+      curl -sS -X POST \
+        -H "Authorization: Bearer ${NORTHFLANK_API_TOKEN}" \
+        -H "Content-Type: application/json" \
+        -d '{"external":{"registryProvider":"custom","privateImage":false,"imagePath":"registry.forge.labs.searchatlas.com/search-atlas-group/marketing/amm-syllabus:latest","credentials":"amm-syllabus-registry"}}' \
+        "https://api.northflank.com/v1/projects/amm-syllabus/services/app/deployment"
+    - echo "Deployed to Northflank"
+  only:
+    - main
