@@ -1,0 +1,951 @@
+<!-- v3 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecting the Agentic Agency - Agentic Marketing Mastermind</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #111827;
+  --bg-card: #1a2035;
+  --bg-card-hover: #1f2847;
+  --text-primary: #f0f2f8;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-gold: #d4a853;
+  --accent-gold-light: #e8c878;
+  --accent-blue: #3b82f6;
+  --accent-blue-light: #60a5fa;
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-accent: rgba(212,168,83,0.3);
+  --gradient-gold: linear-gradient(135deg, #d4a853, #f0d68a, #d4a853);
+  --gradient-dark: linear-gradient(180deg, #0a0e1a 0%, #111827 100%);
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-glow: 0 0 40px rgba(212,168,83,0.08);
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --max-width: 1200px;
+  --nav-height: 72px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAV ─── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: var(--nav-height);
+  background: rgba(10,14,26,0.85);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.nav.scrolled { background: rgba(10,14,26,0.96); box-shadow: 0 2px 30px rgba(0,0,0,0.5); }
+.nav-inner {
+  max-width: var(--max-width); margin: 0 auto; padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between; height: 100%;
+}
+.nav-logo {
+  font-family: var(--font-heading); font-size: 1.15rem; font-weight: 600;
+  color: var(--accent-gold); letter-spacing: 0.02em; text-decoration: none;
+}
+.nav-logo span { color: var(--text-secondary); font-weight: 400; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;
+  font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;
+  transition: color 0.25s; position: relative;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1.5px;
+  background: var(--accent-gold); transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--accent-gold); }
+.nav-links a:hover::after { width: 100%; }
+.nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+.nav-toggle span {
+  display: block; width: 22px; height: 2px; background: var(--text-secondary);
+  margin: 5px 0; transition: 0.3s;
+}
+
+/* ─── HERO ─── */
+.hero {
+  position: relative; min-height: 100vh; display: flex; align-items: center;
+  justify-content: center; text-align: center; padding: 8rem 2rem 6rem;
+  overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(212,168,83,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 20% 80%, rgba(59,130,246,0.04) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0; opacity: 0.03;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-content { position: relative; max-width: 860px; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  font-size: 0.8rem; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--accent-gold); margin-bottom: 2rem;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; width: 40px; height: 1px; background: var(--accent-gold); opacity: 0.4;
+}
+.hero h1 {
+  font-family: var(--font-heading); font-size: clamp(2.8rem, 6vw, 5.2rem);
+  font-weight: 700; line-height: 1.1; margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #f0f2f8 30%, #d4a853 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.25rem); color: var(--text-secondary);
+  max-width: 640px; margin: 0 auto 3rem; line-height: 1.8; font-weight: 300;
+}
+.hero-meta {
+  display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;
+}
+.hero-meta-item {
+  text-align: center;
+}
+.hero-meta-item .number {
+  font-family: var(--font-heading); font-size: 2rem; font-weight: 700;
+  color: var(--accent-gold); display: block;
+}
+.hero-meta-item .label {
+  font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-muted); font-weight: 500;
+}
+.hero-scroll-cue {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  color: var(--text-muted); font-size: 0.72rem; letter-spacing: 0.1em;
+  text-transform: uppercase; animation: float 3s ease-in-out infinite;
+}
+.hero-scroll-cue .arrow { font-size: 1.2rem; }
+@keyframes float { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+
+/* ─── SECTIONS ─── */
+section { padding: 7rem 2rem; }
+.container { max-width: var(--max-width); margin: 0 auto; }
+
+.section-eyebrow {
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent-gold); margin-bottom: 1rem;
+}
+.section-title {
+  font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700; margin-bottom: 1rem; line-height: 1.2;
+}
+.section-desc {
+  color: var(--text-secondary); max-width: 700px; font-size: 1.05rem;
+  line-height: 1.8; font-weight: 300; margin-bottom: 3.5rem;
+}
+
+/* ─── TIMELINE ─── */
+.timeline-section { background: var(--bg-secondary); }
+.timeline-track {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 0;
+  position: relative; margin-top: 1rem;
+}
+.timeline-track::before {
+  content: ''; position: absolute; top: 40px; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue), var(--accent-gold));
+  opacity: 0.3;
+}
+.timeline-phase {
+  position: relative; text-align: center; padding: 0 0.5rem;
+}
+.timeline-dot {
+  width: 16px; height: 16px; border-radius: 50%; margin: 33px auto 1.5rem;
+  border: 2px solid var(--accent-gold); background: var(--bg-secondary);
+  position: relative; z-index: 2; transition: 0.3s;
+}
+.timeline-phase:hover .timeline-dot {
+  background: var(--accent-gold); box-shadow: 0 0 20px rgba(212,168,83,0.4);
+}
+.timeline-phase-num {
+  font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700;
+  color: var(--accent-gold); margin-bottom: 0.4rem;
+}
+.timeline-phase-title {
+  font-size: 0.82rem; font-weight: 600; margin-bottom: 0.5rem;
+  color: var(--text-primary); line-height: 1.3;
+}
+.timeline-phase-desc {
+  font-size: 0.72rem; color: var(--text-muted); line-height: 1.5;
+}
+
+/* ─── PHASE SECTIONS ─── */
+.phase-section { position: relative; }
+.phase-section:nth-child(even) { background: var(--bg-secondary); }
+
+.phase-header {
+  display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+}
+.phase-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-heading); font-size: 0.9rem; font-weight: 700;
+  color: var(--accent-gold); border: 1.5px solid var(--accent-gold);
+  padding: 0.3rem 1rem; border-radius: 4px; white-space: nowrap;
+  letter-spacing: 0.05em;
+}
+.phase-logic {
+  background: linear-gradient(135deg, rgba(212,168,83,0.05), rgba(212,168,83,0.02));
+  border-left: 3px solid var(--accent-gold); padding: 1.5rem 2rem;
+  border-radius: 0 8px 8px 0; margin-bottom: 3rem;
+  color: var(--text-secondary); font-size: 0.95rem; line-height: 1.8;
+}
+
+/* ─── SESSION CARDS ─── */
+.session-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem; }
+.session-card {
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: 12px; padding: 2.5rem; position: relative;
+  transition: transform 0.35s, box-shadow 0.35s, border-color 0.35s;
+  overflow: hidden;
+}
+.session-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--gradient-gold); opacity: 0; transition: opacity 0.35s;
+}
+.session-card:hover {
+  transform: translateY(-4px); box-shadow: var(--shadow-glow);
+  border-color: var(--border-accent);
+}
+.session-card:hover::before { opacity: 1; }
+
+.session-num {
+  font-family: var(--font-heading); font-size: 0.8rem; font-weight: 600;
+  color: var(--accent-gold); margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+.session-format {
+  display: inline-block; font-size: 0.68rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.1em; padding: 0.2rem 0.6rem;
+  border-radius: 3px; margin-bottom: 1rem;
+}
+.session-format.virtual { background: rgba(59,130,246,0.15); color: var(--accent-blue-light); }
+
+.session-title {
+  font-family: var(--font-heading); font-size: 1.35rem; font-weight: 600;
+  margin-bottom: 0.75rem; line-height: 1.3;
+}
+.session-objective {
+  font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.7;
+  font-style: italic;
+}
+.session-deliverables h4 {
+  font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--accent-gold); margin-bottom: 1rem;
+}
+.deliverable {
+  position: relative; padding-left: 1.2rem; margin-bottom: 1rem;
+  font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7;
+}
+.deliverable::before {
+  content: ''; position: absolute; left: 0; top: 0.65em;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent-gold); opacity: 0.7;
+}
+.deliverable strong { color: var(--text-primary); font-weight: 600; }
+
+/* ─── COMPOUNDING ─── */
+.compounding-section { background: var(--bg-primary); position: relative; overflow: hidden; }
+.compounding-section::before {
+  content: ''; position: absolute; top: 0; right: -10%; width: 50%; height: 100%;
+  background: radial-gradient(ellipse at center, rgba(212,168,83,0.03), transparent 70%);
+}
+
+.cascade {
+  display: flex; flex-direction: column; gap: 0; position: relative; max-width: 800px;
+}
+.cascade-item {
+  display: flex; align-items: stretch; position: relative;
+  opacity: 0; transform: translateX(-30px);
+  transition: opacity 0.6s, transform 0.6s;
+}
+.cascade-item.visible { opacity: 1; transform: translateX(0); }
+.cascade-item:nth-child(1) { transition-delay: 0s; }
+.cascade-item:nth-child(2) { transition-delay: 0.1s; margin-left: 2rem; }
+.cascade-item:nth-child(3) { transition-delay: 0.2s; margin-left: 4rem; }
+.cascade-item:nth-child(4) { transition-delay: 0.3s; margin-left: 6rem; }
+.cascade-item:nth-child(5) { transition-delay: 0.4s; margin-left: 8rem; }
+.cascade-item:nth-child(6) { transition-delay: 0.5s; margin-left: 10rem; }
+
+.cascade-connector {
+  width: 3px; min-height: 20px; background: linear-gradient(to bottom, var(--accent-gold), transparent);
+  margin-left: 1.5rem; flex-shrink: 0;
+}
+.cascade-card {
+  flex: 1; display: flex; align-items: center; gap: 1.25rem;
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: 10px; padding: 1.25rem 1.75rem; margin: 0.4rem 0;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.cascade-card:hover {
+  border-color: var(--border-accent); box-shadow: var(--shadow-glow);
+}
+.cascade-num {
+  font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700;
+  color: var(--accent-gold); opacity: 0.7; flex-shrink: 0; width: 2.5rem; text-align: center;
+}
+.cascade-text {
+  font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;
+}
+.cascade-text strong { color: var(--text-primary); }
+.cascade-arrow {
+  color: var(--accent-gold); font-size: 1.2rem; margin-left: auto; opacity: 0.4; flex-shrink: 0;
+}
+
+/* ─── MADRID RETREAT ─── */
+.madrid-section { background: var(--bg-secondary); }
+
+.venue-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 4rem; }
+.venue-card {
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: 12px; overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.venue-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-glow); }
+.venue-img {
+  height: 180px;
+  background: linear-gradient(135deg, rgba(212,168,83,0.08), rgba(59,130,246,0.06));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em;
+  text-transform: uppercase; position: relative;
+  overflow: hidden;
+}
+.venue-img::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.015) 20px, rgba(255,255,255,0.015) 40px);
+}
+.venue-img .icon { font-size: 2.5rem; opacity: 0.15; margin-bottom: 0.5rem; display: block; }
+.venue-body { padding: 1.5rem; }
+.venue-event {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent-gold); margin-bottom: 0.4rem;
+}
+.venue-title {
+  font-family: var(--font-heading); font-size: 1.15rem; font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.venue-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; }
+
+/* ─── SCHEDULE TABLE ─── */
+.schedule-wrap { overflow-x: auto; margin-top: 2rem; }
+.schedule-table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  font-size: 0.82rem; min-width: 700px;
+}
+.schedule-table thead th {
+  background: var(--bg-card); color: var(--accent-gold);
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  font-size: 0.75rem; padding: 1rem 1.25rem; text-align: left;
+  border-bottom: 2px solid rgba(212,168,83,0.2);
+}
+.schedule-table thead th:first-child { border-radius: 8px 0 0 0; }
+.schedule-table thead th:last-child { border-radius: 0 8px 0 0; }
+.schedule-table td {
+  padding: 0.9rem 1.25rem; border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary); line-height: 1.5; vertical-align: top;
+}
+.schedule-table td:first-child {
+  font-weight: 600; color: var(--text-primary); white-space: nowrap; font-size: 0.8rem;
+}
+.schedule-table tbody tr { transition: background 0.2s; }
+.schedule-table tbody tr:hover { background: rgba(212,168,83,0.03); }
+.schedule-table tbody tr:last-child td { border-bottom: none; }
+.schedule-table tbody tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+.schedule-table tbody tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+
+/* ─── SESSION MAP TABLE ─── */
+.map-section { background: var(--bg-primary); }
+.map-table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  font-size: 0.85rem;
+}
+.map-table thead th {
+  background: var(--bg-card); color: var(--accent-gold);
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  font-size: 0.75rem; padding: 1rem 1.5rem; text-align: left;
+  border-bottom: 2px solid rgba(212,168,83,0.2);
+}
+.map-table thead th:first-child { border-radius: 8px 0 0 0; }
+.map-table thead th:last-child { border-radius: 0 8px 0 0; }
+.map-table td {
+  padding: 0.85rem 1.5rem; border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary); vertical-align: middle;
+}
+.map-table td:first-child { font-weight: 700; color: var(--accent-gold); text-align: center; }
+.map-table .format-badge {
+  display: inline-block; font-size: 0.68rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 0.15rem 0.55rem; border-radius: 3px;
+}
+.map-table .format-badge.v { background: rgba(59,130,246,0.15); color: var(--accent-blue-light); }
+.map-table .format-badge.ip { background: rgba(212,168,83,0.15); color: var(--accent-gold-light); }
+.map-table tbody tr { transition: background 0.2s; }
+.map-table tbody tr:hover { background: rgba(212,168,83,0.03); }
+.map-table tbody tr:last-child td { border-bottom: none; }
+
+/* ─── SEGMENT LABELS ─── */
+.segment-label {
+  display: inline-block; font-size: 0.7rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 0.35rem 1rem; border-radius: 20px; margin-bottom: 1.5rem;
+  background: rgba(212,168,83,0.1); color: var(--accent-gold);
+  border: 1px solid rgba(212,168,83,0.2);
+}
+
+/* ─── FOOTER ─── */
+.footer {
+  padding: 4rem 2rem; text-align: center;
+  border-top: 1px solid var(--border-subtle);
+}
+.footer-brand {
+  font-family: var(--font-heading); font-size: 1.3rem; font-weight: 600;
+  color: var(--accent-gold); margin-bottom: 0.75rem;
+}
+.footer-sub {
+  font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem;
+}
+.footer-line {
+  width: 60px; height: 1px; background: var(--accent-gold);
+  opacity: 0.3; margin: 0 auto 1.5rem;
+}
+.footer-copy { font-size: 0.75rem; color: var(--text-muted); }
+
+/* ─── FADE IN ANIMATION ─── */
+.fade-up {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* ─── DASHBOARD TABLE (Phase 4) ─── */
+.dashboard-table-wrap { overflow-x: auto; margin-top: 1.5rem; }
+.mini-table {
+  width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.8rem;
+}
+.mini-table th {
+  background: rgba(212,168,83,0.08); color: var(--accent-gold);
+  font-weight: 600; font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.08em; padding: 0.7rem 1rem; text-align: left;
+  border-bottom: 1px solid rgba(212,168,83,0.15);
+}
+.mini-table td {
+  padding: 0.65rem 1rem; border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary); line-height: 1.5;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .timeline-track { grid-template-columns: repeat(3, 1fr); row-gap: 2rem; }
+  .venue-grid { grid-template-columns: 1fr; }
+  .session-cards { grid-template-columns: 1fr; }
+  .cascade-item:nth-child(n) { margin-left: 0 !important; }
+  .nav-links { display: none; }
+  .nav-links.open {
+    display: flex; flex-direction: column; position: absolute;
+    top: var(--nav-height); left: 0; right: 0;
+    background: rgba(10,14,26,0.98); padding: 1.5rem 2rem; gap: 1.25rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .nav-toggle { display: block; }
+}
+@media (max-width: 600px) {
+  .timeline-track { grid-template-columns: repeat(2, 1fr); }
+  section { padding: 4.5rem 1.25rem; }
+  .hero { padding: 7rem 1.25rem 4rem; }
+  .hero-meta { gap: 1.5rem; }
+  .phase-logic { padding: 1.25rem 1.5rem; }
+  .session-card { padding: 1.75rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo">AMM <span>Mastermind</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#journey">Journey</a></li>
+      <li><a href="#phase1">Phase 1</a></li>
+      <li><a href="#phase2">Phase 2</a></li>
+      <li><a href="#phase3">Phase 3</a></li>
+      <li><a href="#phase4">Phase 4</a></li>
+      <li><a href="#phase5">Phase 5</a></li>
+      <li><a href="#phase6">Phase 6</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content fade-up">
+    <div class="hero-eyebrow">Agentic Marketing Mastermind</div>
+    <h1>Architecting the Agentic Agency</h1>
+    <p class="hero-sub">A comprehensive 12-month curriculum for agency owners ready to transcend manual execution and build autonomous, AI-driven revenue systems that operate 24/7.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="number">10</span>
+        <span class="label">Sessions</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="number">6</span>
+        <span class="label">Phases</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="number">3</span>
+        <span class="label">Segments</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="number">12</span>
+        <span class="label">Months</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-cue">
+    <span>Explore the Journey</span>
+    <span class="arrow">&#8595;</span>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline-section" id="journey">
+  <div class="container">
+    <div class="section-eyebrow fade-up">Curriculum Architecture</div>
+    <h2 class="section-title fade-up">3 Segments, 6 Phases</h2>
+    <p class="section-desc fade-up">Each phase creates the prerequisite asset for the next. Brand authority enables fulfillment. Fulfillment produces case studies. Case studies enable sales. Sales create clients who demand reporting and CRM. And the entire machine demands autonomy.</p>
+    <div class="timeline-track fade-up">
+      <div class="timeline-phase">
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase-num">Phase 1</div>
+        <div class="timeline-phase-title">Brand + Entity</div>
+        <div class="timeline-phase-desc">Semantic brand recognition, elevated AI visibility, personal authority</div>
+      </div>
+      <div class="timeline-phase">
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase-num">Phase 2</div>
+        <div class="timeline-phase-title">SEO/GEO/PPC Fulfillment</div>
+        <div class="timeline-phase-desc">Organic &amp; paid growth, verifiable case studies, automated fulfillment</div>
+      </div>
+      <div class="timeline-phase">
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase-num">Phase 3</div>
+        <div class="timeline-phase-title">CRM &amp; Automations</div>
+        <div class="timeline-phase-desc">Unified client management, automated workflows, revenue attribution</div>
+      </div>
+      <div class="timeline-phase">
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase-num">Phase 4</div>
+        <div class="timeline-phase-title">Prospecting &amp; Sales</div>
+        <div class="timeline-phase-desc">Predictable client acquisition, elevated close rates, outcome pricing</div>
+      </div>
+      <div class="timeline-phase">
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase-num">Phase 5</div>
+        <div class="timeline-phase-title">Reporting &amp; Comms</div>
+        <div class="timeline-phase-desc">Zero-touch reporting, proactive communications, reduced churn</div>
+      </div>
+      <div class="timeline-phase">
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase-num">Phase 6</div>
+        <div class="timeline-phase-title">Perpetual Agents</div>
+        <div class="timeline-phase-desc">Zero-touch execution, future-proofed agency, autonomous revenue</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE 1 -->
+<section class="phase-section" id="phase1">
+  <div class="container">
+    <div class="segment-label fade-up">Segment 1 &mdash; Brand, Entity, SEO/GEO/Local/Ads/PPC Fulfillment, CRM &amp; Automations</div>
+    <div class="phase-header fade-up">
+      <span class="phase-badge">Phase 1</span>
+      <h2 class="section-title" style="margin-bottom:0">Brand + Entity</h2>
+    </div>
+    <div class="phase-logic fade-up">
+      You cannot sell authority you do not possess. Before attempting to acquire clients or deploy fulfillment systems, the agency owner must become a verified, machine-readable entity in the semantic web. This phase gives participants immediate, tangible assets that build confidence before the more technically demanding phases ahead.
+    </div>
+    <div class="session-cards">
+      <!-- Session 1 -->
+      <div class="session-card fade-up">
+        <div class="session-num">Session 1</div>
+        <span class="session-format virtual">Virtual</span>
+        <h3 class="session-title">The Digital Identity Foundation</h3>
+        <p class="session-objective">Establish the participant's digital entity architecture and operational baseline.</p>
+        <div class="session-deliverables">
+          <h4>Core Deliverables</h4>
+          <div class="deliverable"><strong>Website Architecture via Website Studio</strong> &mdash; Build or rebuild web properties with semantic HTML5 elements optimized for machine readability and AI extraction.</div>
+          <div class="deliverable"><strong>Schema.org Structured Data Deployment</strong> &mdash; Deploy comprehensive Organization and Person schemas with sameAs, founder, knowsAbout, and hasCredential properties to feed the Google Knowledge Graph.</div>
+          <div class="deliverable"><strong>Executive Automation Setup</strong> &mdash; Configure AI agents for email and scheduling via MCP servers, reclaiming 5-10 hours per week of administrative overhead.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE 2 -->
+<section class="phase-section" id="phase2">
+  <div class="container">
+    <div class="phase-header fade-up">
+      <span class="phase-badge">Phase 2</span>
+      <h2 class="section-title" style="margin-bottom:0">SEO/GEO/PPC Fulfillment &amp; Case Studies</h2>
+    </div>
+    <div class="phase-logic fade-up">
+      With the brand entity established, participants now build the fulfillment engine that generates measurable results. This phase is the backbone of the entire mastermind: every case study generated here becomes sales ammunition in Phase 3, and every automated workflow becomes the delivery system for future client retainers.
+    </div>
+    <div class="session-cards">
+      <!-- Session 2 -->
+      <div class="session-card fade-up">
+        <div class="session-num">Session 2</div>
+        <span class="session-format virtual">Virtual</span>
+        <h3 class="session-title">Topical Relevance Engineering</h3>
+        <p class="session-objective">Master the science of topical authority mapping and semantic content architecture.</p>
+        <div class="session-deliverables">
+          <h4>Core Deliverables</h4>
+          <div class="deliverable"><strong>Semantic Cluster Mapping</strong> &mdash; Identify complete semantic clusters using Content Genius and searchatlas_content MCP tools: parent topics, subtopics, entities, and semantic gaps.</div>
+          <div class="deliverable"><strong>Content Architecture Design</strong> &mdash; Produce comprehensive content architecture defining pillar pages, cluster content, internal linking topology, and publication sequencing.</div>
+          <div class="deliverable"><strong>Content Audit &amp; Pruning</strong> &mdash; Run relevance scoring algorithms to identify pages diluting domain authority for pruning, merging, or rewriting.</div>
+          <div class="deliverable"><strong>GEO-Specific Content Structuring</strong> &mdash; Implement BLUF structures, citation clusters, FAQ blocks for AI extraction, and semantic HTML patterns maximizing LLM citation probability.</div>
+        </div>
+      </div>
+      <!-- Session 3 -->
+      <div class="session-card fade-up">
+        <div class="session-num">Session 3</div>
+        <span class="session-format virtual">Virtual</span>
+        <h3 class="session-title">Sitewide Content Generation at Scale</h3>
+        <p class="session-objective">Deploy industrial-scale, AI-driven content production pipelines that maintain quality and semantic integrity.</p>
+        <div class="session-deliverables">
+          <h4>Core Deliverables</h4>
+          <div class="deliverable"><strong>Automated Drafting Protocols</strong> &mdash; Generate semantically rich articles at industrial scale with automatic internal linking, FAQ sections, and strict semantic HTML hierarchies.</div>
+          <div class="deliverable"><strong>Universal CMS Deployment</strong> &mdash; Push engineered content directly to staging or live domains via 1-click publishing across multiple client sites.</div>
+          <div class="deliverable"><strong>Content Lifecycle Management</strong> &mdash; Configure automated decay detection and refresh workflows, transforming content into self-maintaining assets.</div>
+          <div class="deliverable"><strong>Case Study Documentation</strong> &mdash; Begin systematically capturing baseline metrics, actions, outcomes, traffic graphs, and revenue attribution.</div>
+        </div>
+      </div>
+      <!-- Session 4 -->
+      <div class="session-card fade-up">
+        <div class="session-num">Session 4</div>
+        <span class="session-format virtual">Virtual</span>
+        <h3 class="session-title">Large-Scale Authority Building</h3>
+        <p class="session-objective">Build unassailable domain authority through automated digital PR and strategic link acquisition.</p>
+        <div class="session-deliverables">
+          <h4>Core Deliverables</h4>
+          <div class="deliverable"><strong>Automated Link Acquisition</strong> &mdash; Utilize LinkLabs and outreach tools for automated HARO pitches, broken link campaigns, and partnership opportunities.</div>
+          <div class="deliverable"><strong>Digital PR Campaigns</strong> &mdash; Orchestrate multi-channel PR combining Authority Trophy assets with targeted outreach for high-authority editorial backlinks.</div>
+          <div class="deliverable"><strong>LLM Visibility Tracking</strong> &mdash; Track brand citations in LLM outputs: share of voice, sentiment, and citation frequency across models.</div>
+          <div class="deliverable"><strong>Case Study Completion</strong> &mdash; Compile first complete case studies with real before/after data to power Phase 3 sales.</div>
+        </div>
+      </div>
+      <!-- Session 5 -->
+      <div class="session-card fade-up">
+        <div class="session-num">Session 5</div>
+        <span class="session-format virtual">Virtual</span>
+        <h3 class="session-title">Local SEO &amp; Google Business Profile Dominance</h3>
+        <p class="session-objective">Translate broad entity authority into hyper-local search dominance and capture high-intent leads in specific geographic markets.</p>
+        <div class="session-deliverables">
+          <h4>Core Deliverables</h4>
+          <div class="deliverable"><strong>Google Business Profile Optimization</strong> &mdash; Claim, verify, and aggressively optimize GBPs using the searchatlas_gbp tool and GBP Galactic features with automated review management and citation building.</div>
+          <div class="deliverable"><strong>Local Grid Tracking &amp; Heatmaps</strong> &mdash; Deploy grid-based rank tracking to visualize local search dominance across geographic zones and identify coverage gaps.</div>
+          <div class="deliverable"><strong>AI-Powered Local Content</strong> &mdash; Generate hyper-relevant local posts, brand-aligned review responses, and geo-targeted landing pages at scale.</div>
+          <div class="deliverable"><strong>Multi-Location Management</strong> &mdash; Build scalable workflows for managing dozens of client GBP profiles simultaneously with automated posting, review monitoring, and citation consistency.</div>
+        </div>
+      </div>
+      <!-- Session 6 -->
+      <div class="session-card fade-up">
+        <div class="session-num">Session 6</div>
+        <span class="session-format virtual">Virtual</span>
+        <h3 class="session-title">Paid Media &amp; Landing Page Architecture</h3>
+        <p class="session-objective">Master paid customer acquisition across Google and Facebook, coupled with high-converting landing page deployment.</p>
+        <div class="session-deliverables">
+          <h4>Core Deliverables</h4>
+          <div class="deliverable"><strong>Google Ads Automation</strong> &mdash; Automate campaign reporting, bid management, and performance analysis via OTTO PPC with keyword-level bidding and quality score optimization.</div>
+          <div class="deliverable"><strong>Facebook Ads Architecture</strong> &mdash; Build full-funnel campaigns: cold audience prospecting, warm retargeting, lookalike expansion with creative testing frameworks.</div>
+          <div class="deliverable"><strong>Landing Page Generation</strong> &mdash; Rapidly construct localized, conversion-optimized pages tailored to specific ad groups and geographic markets.</div>
+          <div class="deliverable"><strong>Multivariate Testing &amp; CPA Optimization</strong> &mdash; Collaborative teardowns analyzing campaigns, identifying waste, and implementing systematic CPA reduction.</div>
+          <div class="deliverable"><strong>Paid + Organic Integration</strong> &mdash; Paid data feeds organic strategy; organic rankings reduce paid dependency. The flywheel effect is quantified and modeled.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE 3 -->
+<section class="phase-section" id="phase3">
+  <div class="container">
+    <div class="phase-header fade-up">
+      <span class="phase-badge">Phase 3</span>
+      <h2 class="section-title" style="margin-bottom:0">CRM &amp; Automations</h2>
+    </div>
+    <div class="phase-logic fade-up">
+      With fulfillment systems producing results, the agency needs a central nervous system. CRM and automation infrastructure connects every touchpoint&mdash;leads, clients, campaigns, and communications&mdash;into a single orchestrated workflow. This phase eliminates manual handoffs and ensures no opportunity falls through the cracks.
+    </div>
+    <div class="session-cards">
+      <!-- Session 7 -->
+      <div class="session-card fade-up" style="max-width: 100%;">
+        <div class="session-num">Session 7</div>
+        <span class="session-format virtual">Virtual</span>
+        <h3 class="session-title">CRM Architecture &amp; Marketing Automation</h3>
+        <p class="session-objective">Build the central automation backbone that connects lead generation, client management, and campaign execution into a single orchestrated system.</p>
+        <div class="session-deliverables">
+          <h4>Core Deliverables</h4>
+          <div class="deliverable"><strong>CRM Pipeline Architecture</strong> &mdash; Design and deploy multi-stage pipelines for leads, prospects, active clients, and upsell opportunities with automated stage transitions and task triggers.</div>
+          <div class="deliverable"><strong>Lead Nurture Sequences</strong> &mdash; Build automated email and messaging sequences triggered by prospect behavior: site visits, proposal views, form submissions, and engagement signals.</div>
+          <div class="deliverable"><strong>Client Lifecycle Automation</strong> &mdash; Automate the full client journey: onboarding workflows, milestone check-ins, renewal reminders, upsell triggers, and win-back campaigns for churned accounts.</div>
+          <div class="deliverable"><strong>Cross-Platform Integration</strong> &mdash; Connect CRM with ad platforms, analytics, Slack, email, and Search Atlas MCP tools for unified data flow and trigger-based automations across all channels.</div>
+          <div class="deliverable"><strong>Revenue Attribution &amp; Forecasting</strong> &mdash; Build automated revenue tracking from first touch to closed deal, with pipeline forecasting models and LTV projections per acquisition channel.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE 4 -->
+<section class="phase-section" id="phase4">
+  <div class="container">
+    <div class="segment-label fade-up">Segment 2 &mdash; Prospecting, Sales, Reporting &amp; Comms</div>
+    <div class="phase-header fade-up">
+      <span class="phase-badge">Phase 4</span>
+      <h2 class="section-title" style="margin-bottom:0">Prospecting, Proposals &amp; Sales</h2>
+    </div>
+    <div class="phase-logic fade-up">
+      With a verified brand entity and documented case studies in hand, participants are credibly positioned to acquire clients. Outbound prospecting generates qualified leads, then sales mechanics and proposal engineering close them.
+    </div>
+    <div class="session-cards">
+      <!-- Session 8 -->
+      <div class="session-card fade-up">
+        <div class="session-num">Session 8</div>
+        <span class="session-format virtual">Virtual</span>
+        <h3 class="session-title">Programmatic Outbound &amp; the "Clone Website" Strategy</h3>
+        <p class="session-objective">Deploy the most potent cold outreach strategy in the modern agency playbook&mdash;delivering undeniable, personalized value at the top of the funnel.</p>
+        <div class="session-deliverables">
+          <h4>Core Deliverables</h4>
+          <div class="deliverable"><strong>Automated Technical Auditing</strong> &mdash; The Site Auditor crawls prospect websites, generating customized reports on technical failures, schema deficiencies, and Core Web Vitals.</div>
+          <div class="deliverable"><strong>"Clone Website" Mock-Ups</strong> &mdash; Build visually superior, structurally optimized mock-ups of prospect sites using Website Studio, making value propositions tangible.</div>
+          <div class="deliverable"><strong>Programmatic Outreach via MCP</strong> &mdash; Chain Search Atlas MCP with email integrations to identify prospects, run audits, generate mock-ups, and dispatch outreach automatically.</div>
+          <div class="deliverable"><strong>Case Study Integration</strong> &mdash; Every outreach email references Phase 2 case studies, creating a triple-layered value proposition: audit + mock-up + verified results.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE 5 -->
+<section class="phase-section" id="phase5">
+  <div class="container">
+    <div class="phase-header fade-up">
+      <span class="phase-badge">Phase 5</span>
+      <h2 class="section-title" style="margin-bottom:0">Reporting &amp; Client Communications</h2>
+    </div>
+    <div class="phase-logic fade-up">
+      The highest cause of client churn in digital marketing is poor communication of value. With clients now on retainer, participants must demonstrate ongoing ROI with minimal manual effort. This phase transforms reporting from a time-consuming obligation into an automated competitive advantage.
+    </div>
+    <div class="session-cards">
+      <!-- Session 9 -->
+      <div class="session-card fade-up" style="max-width: 100%;">
+        <div class="session-num">Session 9</div>
+        <span class="session-format virtual">Virtual</span>
+        <h3 class="session-title">Automated Dashboards &amp; Client Communications</h3>
+        <p class="session-objective">Build custom reporting dashboards and proactive communication systems that eliminate churn and compound perceived value without manual effort.</p>
+        <div class="session-deliverables">
+          <h4>Core Deliverables</h4>
+          <div class="deliverable"><strong>Custom HTML Dashboard Construction</strong> &mdash; Build self-contained, interactive reporting interfaces using Claude Code + Search Atlas MCP with D3.js visualizations.</div>
+          <div class="deliverable"><strong>Multi-Source Dashboard Architecture</strong> &mdash; Integrate organic/paid metrics, task tracking, and AI-generated executive summaries into unified dashboards.</div>
+          <div class="deliverable"><strong>Automated Slack Reporting</strong> &mdash; Secure webhooks deliver proactive, formatted updates on task completion and ranking movements into client Slack channels.</div>
+          <div class="deliverable"><strong>AI-Generated Narrative Reports</strong> &mdash; Weekly summaries translating metrics into business impact with revenue projections based on current conversion rates.</div>
+          <div class="deliverable"><strong>Churn Prevention Signals</strong> &mdash; Automated detection of declining engagement, missed calls, and ranking dips triggers proactive outreach before churn.</div>
+          <div class="deliverable"><strong>Client Onboarding Automation</strong> &mdash; Standardized sequences: welcome emails, access provisioning, baseline audits, first-30-day expectations documents.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE 6 -->
+<section class="phase-section" id="phase6">
+  <div class="container">
+    <div class="segment-label fade-up">Segment 3 &mdash; Perpetual Agents</div>
+    <div class="phase-header fade-up">
+      <span class="phase-badge">Phase 6</span>
+      <h2 class="section-title" style="margin-bottom:0">Perpetual Agents &mdash; The 24/7 Agentic Agency</h2>
+    </div>
+    <div class="phase-logic fade-up">
+      Everything built in Phases 1&ndash;5 still requires human initiation. Phase 6 removes that final constraint. The agency transitions from "automated with human triggers" to "autonomous with human oversight." This is the endgame: a marketing agency that operates continuously, self-corrects, and generates revenue while the owner sleeps.
+    </div>
+    <div class="session-cards">
+      <!-- Session 10 -->
+      <div class="session-card fade-up" style="max-width: 100%;">
+        <div class="session-num">Session 10</div>
+        <span class="session-format virtual">Virtual</span>
+        <h3 class="session-title">The Autonomous Agency Blueprint</h3>
+        <p class="session-objective">Deploy Perpetual Agents that monitor, optimize, and execute marketing operations 24/7&mdash;transforming the agency into a truly autonomous entity.</p>
+        <div class="session-deliverables">
+          <h4>Core Deliverables</h4>
+          <div class="deliverable"><strong>Perpetual Agent Architecture</strong> &mdash; Design continuous, self-healing loops: keyword monitors trigger content refreshes, technical SEO agents deploy patches, backlink monitors initiate recovery outreach.</div>
+          <div class="deliverable"><strong>Agent-to-Agent (A2A) Commerce Preparation</strong> &mdash; Structure client data and product catalogs for autonomous purchasing systems in the zero-click, automated marketplace.</div>
+          <div class="deliverable"><strong>Desktop &amp; Mobile Command Interfaces</strong> &mdash; Configure streamlined approval interfaces for management by exception&mdash;only reviewing decisions exceeding confidence thresholds.</div>
+          <div class="deliverable"><strong>The 24/7 Agentic Agency Model</strong> &mdash; Map the complete autonomous flow: agents execute, dashboards report, clients receive comms, outbound prospects, proposals draft, owner approves.</div>
+          <div class="deliverable"><strong>3-to-5 Year Strategic Roadmap</strong> &mdash; Individualized plans covering scaling strategies, AI vs. human augmentation, acquisition exits, and positioning for the agentic commerce economy of 2027&ndash;2030.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPOUNDING EFFECT -->
+<section class="compounding-section" id="compounding">
+  <div class="container">
+    <div class="section-eyebrow fade-up">The Design Logic</div>
+    <h2 class="section-title fade-up">The Compounding Effect</h2>
+    <p class="section-desc fade-up">Each phase produces the prerequisite asset for the next. Skip a phase, and the subsequent phases collapse. Execute them in order, and you exit with a technologically unassailable position.</p>
+    <div class="cascade">
+      <div class="cascade-item">
+        <div class="cascade-card">
+          <div class="cascade-num">1</div>
+          <div class="cascade-text"><strong>Brand Entity</strong> &mdash; You become credible and visible to AI systems</div>
+          <div class="cascade-arrow">&#8600;</div>
+        </div>
+      </div>
+      <div class="cascade-item">
+        <div class="cascade-card">
+          <div class="cascade-num">2</div>
+          <div class="cascade-text"><strong>Automated Fulfillment</strong> &mdash; You produce organic &amp; paid results and document them as case studies</div>
+          <div class="cascade-arrow">&#8600;</div>
+        </div>
+      </div>
+      <div class="cascade-item">
+        <div class="cascade-card">
+          <div class="cascade-num">3</div>
+          <div class="cascade-text"><strong>CRM &amp; Automations</strong> &mdash; Every touchpoint connects into one orchestrated system</div>
+          <div class="cascade-arrow">&#8600;</div>
+        </div>
+      </div>
+      <div class="cascade-item">
+        <div class="cascade-card">
+          <div class="cascade-num">4</div>
+          <div class="cascade-text"><strong>Sales Engine</strong> &mdash; You acquire clients predictably with proven ammunition</div>
+          <div class="cascade-arrow">&#8600;</div>
+        </div>
+      </div>
+      <div class="cascade-item">
+        <div class="cascade-card">
+          <div class="cascade-num">5</div>
+          <div class="cascade-text"><strong>Automated Reporting</strong> &mdash; You retain clients without manual overhead</div>
+          <div class="cascade-arrow">&#8600;</div>
+        </div>
+      </div>
+      <div class="cascade-item">
+        <div class="cascade-card">
+          <div class="cascade-num">6</div>
+          <div class="cascade-text"><strong>Perpetual Autonomy</strong> &mdash; The entire system runs without you</div>
+          <div class="cascade-arrow" style="opacity:0;">&#8600;</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- IN-PERSON IMMERSIONS -->
+<section class="madrid-section" id="retreats">
+  <div class="container">
+    <div class="section-eyebrow fade-up">Executive Retreat Architecture</div>
+    <h2 class="section-title fade-up">In-Person Immersions</h2>
+    <p class="section-desc fade-up" style="max-width:600px;">Details on exclusive in-person retreat experiences are currently being finalized. Venue, schedule, and logistics information will be announced soon.</p>
+    <div class="fade-up" style="display:inline-flex;align-items:center;gap:0.75rem;padding:1rem 2rem;background:var(--bg-card);border:1px solid var(--border-accent);border-radius:8px;color:var(--accent-gold);font-weight:600;letter-spacing:0.05em;">
+      Coming Soon
+    </div>
+  </div>
+</section>
+
+<!-- SESSION MAP -->
+<section class="map-section" id="map">
+  <div class="container">
+    <div class="section-eyebrow fade-up">Quick Reference</div>
+    <h2 class="section-title fade-up">Session-to-Phase Mapping</h2>
+    <p class="section-desc fade-up">All 10 sessions across 6 phases in 3 segments.</p>
+    <div class="schedule-wrap fade-up">
+      <table class="map-table">
+        <thead>
+          <tr><th>Session</th><th>Segment</th><th>Phase</th><th>Title</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>1</td><td>Phase 1</td><td>The Digital Identity Foundation</td></tr>
+          <tr><td>2</td><td>1</td><td>Phase 2</td><td>Topical Relevance Engineering</td></tr>
+          <tr><td>3</td><td>1</td><td>Phase 2</td><td>Sitewide Content Generation at Scale</td></tr>
+          <tr><td>4</td><td>1</td><td>Phase 2</td><td>Large-Scale Authority Building</td></tr>
+          <tr><td>5</td><td>1</td><td>Phase 2</td><td>Local SEO &amp; Google Business Profile Dominance</td></tr>
+          <tr><td>6</td><td>1</td><td>Phase 2</td><td>Paid Media &amp; Landing Page Architecture</td></tr>
+          <tr><td>7</td><td>1</td><td>Phase 3</td><td>CRM Architecture &amp; Marketing Automation</td></tr>
+          <tr><td>8</td><td>2</td><td>Phase 4</td><td>Programmatic Outbound &amp; Clone Website Strategy</td></tr>
+          <tr><td>9</td><td>2</td><td>Phase 5</td><td>Automated Dashboards &amp; Client Communications</td></tr>
+          <tr><td>10</td><td>3</td><td>Phase 6</td><td>The Autonomous Agency Blueprint</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-brand">Agentic Marketing Mastermind</div>
+  <div class="footer-sub">Architecting the Agentic Agency &mdash; A 12-Month Transformation</div>
+  <div class="footer-line"></div>
+  <div class="footer-copy">Curriculum v2 &middot; Confidential &middot; All rights reserved</div>
+</footer>
+
+<script>
+// Nav scroll effect
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+// Mobile nav toggle
+const toggle = document.getElementById('navToggle');
+const links = document.getElementById('navLinks');
+toggle.addEventListener('click', () => links.classList.toggle('open'));
+links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+
+// Intersection Observer for fade-in
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-up, .cascade-item').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
